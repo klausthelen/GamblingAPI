@@ -24,4 +24,7 @@ version = "0.1.0"
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    compile group: 'org.springframework.data', name: 'spring-data-redis', version: '2.2.7.RELEASE'
+    compile group: 'redis.clients', name: 'jedis', version: '3.3.0'
 }
+

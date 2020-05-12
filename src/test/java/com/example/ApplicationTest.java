@@ -1,6 +1,5 @@
 package com.example;
 
-import com.example.model.Message;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
