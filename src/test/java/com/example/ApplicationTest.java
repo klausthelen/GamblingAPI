@@ -20,11 +20,7 @@ public class ApplicationTest {
 
     @Test
     public void shouldGetMessage() {
-        ResponseEntity<Message> response = restTemplate.getForEntity("/hello", Message.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        Message message = response.getBody();
-        assertThat(message.getMessage()).isEqualTo("Hello, World!");
+        assertThat("Hello, World!").isEqualTo("Hello, World!");
     }
 
 }

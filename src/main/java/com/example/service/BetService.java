@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.model.Bet;
 import com.example.model.Roulette;
+import com.example.model.User;
 import com.example.repository.BetRepository;
 import com.example.repository.RouletteRepository;
 import com.example.utils.ProbabilityUtil;
@@ -18,6 +19,7 @@ public class BetService {
     private final RouletteRepository rouletteRepository;
     public ProbabilityUtil probabilityUtil = new ProbabilityUtil();
 
+    private User user = User.getUser("username","pwd","NO TOKEN", 100000);
 
     @Autowired
     public BetService(BetRepository betRepository, RouletteRepository rouletteRepository) {
@@ -31,13 +33,36 @@ public class BetService {
         return bets;
     }
 
-    private Map<String, Object> validateBetConditions(Map<String, Object> payload, Map<String, Object> betResult){
+    private String validateUser(String token, int amount){
+        if (token != user.getToken() ){
+            return "User does not exist";
+        }
+        else {
+            if(amount > user.getMoney()){
+                return "Not enough money";
+            }
+        }
+        return "Congratulations";
+    }
+
+    private Map<String, Object> validateBetConditions(Map<String, Object> payload, Map<String, Object> betResult, String token){
         Map<String, Object> returnList = new HashMap<String, Object>();
+        String message = this.validateUser(token,(Integer) payload.get("amount"));
+        if(message != "Congratulations"){
+            returnList.put("error" , true);
+            returnList.put("error" , false);
+            returnList.put("success", false);
+            returnList.put("message", message);
+            returnList.put("id", "");
+            return  returnList;
+        }
         returnList.put("error" , false);
         returnList.put("success", true);
-        returnList.put("message", "Congratulations");
+        returnList.put("message", message);
         returnList.put("id", "");
+
         Optional<Roulette> roulette = rouletteRepository.findById((String) payload.get("rouletteId"));
+
         if(!roulette.isPresent()){
             returnList.put("error", true);
             returnList.put("message", "Roulette not exists");
@@ -70,10 +95,10 @@ public class BetService {
         return returnList;
     }
 
-    public Map<String, Object> createBet(Map<String, Object> payload) {
+    public Map<String, Object> createBet(Map<String, Object> payload, String token) {
         Bet bet = new Bet();
         Map<String, Object> betResult =  probabilityUtil.betRoulette();
-        Map<String, Object> validate = this.validateBetConditions(payload, betResult);
+        Map<String, Object> validate = this.validateBetConditions(payload, betResult, token);
         if (!(boolean)validate.get("error")){
             bet.setRoulette((String) payload.get("rouletteId"));
             bet.setNumber((Integer) payload.get("number"));

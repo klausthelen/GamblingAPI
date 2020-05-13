@@ -6,10 +6,7 @@ import com.example.model.Roulette;
 import com.example.service.BetService;
 import com.example.service.RouletteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +31,8 @@ public class BetController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public Response createBet(@RequestBody Map<String, Object> payload ) {
-        Map<String, Object>  result = betService.createBet(payload);
+    public Response createBet(@RequestBody Map<String, Object> payload, @RequestHeader("token") String token ) {
+        Map<String, Object>  result = betService.createBet(payload, token);
         return response.setResponse(result);
     }
 }
